@@ -8,10 +8,10 @@ QT += core gui opengl
 
 SOURCES += \
     main.cpp \
-    glwidget.cpp
+    maingame.cpp
 
 HEADERS += \
-    glwidget.h
+    maingame.h
 
 INCLUDEPATH += ../MyLE
 LIBS += -L../../libs -lMyLE

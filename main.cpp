@@ -1,13 +1,12 @@
 #include <QApplication>
-#include "glwidget.h"
+#include "maingame.h"
 
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
+    app.setApplicationName("MyLE");
 
-    GLWidget glwindow;
-
-    glwindow.show();
-
+    MainGame game;
+    game.init(200, 200);
     return app.exec();
 }
