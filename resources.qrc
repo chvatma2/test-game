@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>shaders/vertshader.vert</file>
+        <file>shaders/fragshader.frag</file>
+        <file>textures/JimmyJump/CharacterRight_Standing.png</file>
+    </qresource>
+</RCC>
