@@ -96,9 +96,9 @@ void GLWidget::initTimers()
 void GLWidget::initShaders()
 {
     m_shader = new QOpenGLShaderProgram(this);
-    if( m_shader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/vertshader.vert"))
+    if( m_shader->addShaderFromSourceFile(QOpenGLShader::Vertex, "resources/shaders/vertshader.vert"))
         qDebug() << "Vertex shader compiled succesfuly";
-    if (m_shader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/fragshader.frag"))
+    if (m_shader->addShaderFromSourceFile(QOpenGLShader::Fragment, "resources/shaders/fragshader.frag"))
         qDebug() << "Fragment shader compiled succesfuly";
     m_shader->bindAttributeLocation("vertexPosition", 0);
     m_shader->bindAttributeLocation("vertexColor", 1);
@@ -124,8 +124,8 @@ void GLWidget::initializeGL()
 
     //m_resourceManager.loadTexture(":/CharacterRight_Standing.png", m_testTexture);
 
-    m_sprites.push_back(new Sprite(0.0f, 0.0f, 1.0f, 1.0f, ":/textures/JimmyJump/CharacterRight_Standing.png", m_resourceManager));
-    m_sprites.push_back(new Sprite(-1.0f, 0.0f, 1.0f, 1.0f, ":/textures/JimmyJump/CharacterRight_Standing.png", m_resourceManager));
+    m_sprites.push_back(new Sprite(0.0f, 0.0f, 1.0f, 1.0f, "resources/textures/JimmyJump/CharacterRight_Standing.png", m_resourceManager));
+    m_sprites.push_back(new Sprite(-1.0f, 0.0f, 1.0f, 1.0f, "resources/textures/JimmyJump/CharacterRight_Standing.png", m_resourceManager));
 }
 
 void GLWidget::refresh()

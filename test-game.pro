@@ -14,7 +14,17 @@ HEADERS += \
     glwidget.h
 
 INCLUDEPATH += ../MyLE
-LIBS += -L../libs -lMyLE
+LIBS += -L../../libs -lMyLE
+PRE_TARGETDEPS += ../../libs/libMyLE.a
 
-RESOURCES += \
-    resources.qrc
+RESOURCES +=
+
+DISTFILES += \
+    .qmake.conf
+
+unix {
+    copyfiles.commands += cp -r $$top_srcdir/resources $$top_builddir/resources
+}
+
+QMAKE_EXTRA_TARGETS += copyfiles
+POST_TARGETDEPS += copyfiles
