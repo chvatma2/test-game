@@ -13,13 +13,13 @@ class MainGame : public QObject
 public:
     MainGame();
     ~MainGame();
-    void init(int minWidth, int minHeight);
+    void init();
     void initTimers(int swapInterval);
-    void initWindow(int minWidth, int minHeight);
+    void initWindow(int minWidth, int minHeight, bool fullScreen);
     void connectSlots();
 
 private:
-    GLWidget* m_window;
+    MyLE::GLWidget* m_window;
     QTimer* m_frameTimer;
 
 public slots:

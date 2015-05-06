@@ -33,13 +33,15 @@ void MainGame::initTimers(int swapInterval)
     m_frameTimer->start();
 }
 
-void MainGame::initWindow(int minWidth, int minHeight)
+void MainGame::initWindow(int minWidth, int minHeight, bool fullScreen)
 {
-    m_window = new GLWidget();
+    m_window = new MyLE::GLWidget();
     m_window->setMinimumSize(QSize(minWidth, minHeight));
+    if(fullScreen)
+        m_window->showFullScreen();
 }
 
-void MainGame::init(int minWidth, int minHeight)
+void MainGame::init()
 {
     QSurfaceFormat format;
     format.setSwapInterval(1);
@@ -47,7 +49,7 @@ void MainGame::init(int minWidth, int minHeight)
     QSurfaceFormat::setDefaultFormat(format);
 
     initTimers(format.swapInterval());
-    initWindow(minWidth, minHeight);
+    initWindow(200, 200, true);
 
     connectSlots();
 

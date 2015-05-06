@@ -7,6 +7,7 @@ int main(int argc, char* argv[])
     app.setApplicationName("MyLE");
 
     MainGame game;
-    game.init(200, 200);
+    game.init();
+
     return app.exec();
 }
