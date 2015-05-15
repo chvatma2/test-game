@@ -8,6 +8,8 @@ int main(int argc, char* argv[])
 
     MainGame game;
     game.init();
+    qDebug() << "Initialised";
+    game.show();
 
     return app.exec();
 }
