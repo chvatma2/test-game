@@ -3,21 +3,20 @@
 
 #include <QVector2D>
 #include <spritebatch.h>
+#include "movingobject.h"
 
-class Projectile
+class Projectile : public MovingObject
 {
 public:
-    Projectile(QVector2D& position, QVector2D& direction, QVector2D& size, float speed, int lifeTime);
+    Projectile(QVector2D& position, QVector2D& direction, QVector2D& size, float speed, int lifeTime, GLuint texture);
 
     void draw(MyLE::SpriteBatch& spriteBatch);
     void update();
     bool isToBeDestroyed();
 
 private:
-    float m_Speed;
     int m_LifeTime;
     bool m_IsToBeDestroyed;
-    QVector2D m_Position;
     QVector2D m_Direction;
     QVector2D m_Size;
 };

@@ -11,7 +11,8 @@
 #include <resourcemanager.h>
 #include <spritebatch.h>
 
-#include "projectile.h"
+#include "level.h"
+#include "player.h"
 
 
 class MainGame : public QOpenGLWidget, protected QOpenGLFunctions
@@ -30,16 +31,25 @@ public:
     void initializeGL() Q_DECL_OVERRIDE;
 
 private:
-    //Main components
+    //Input
     void processInput();
-    void gameLogic();
-    void renderGame();
     MyLE::InputManager m_InputManager;
+
+    //Game logic
+    void gameLogic();
+
+    //Rendering
+    void renderGame();
+    void renderGameBegin();
+    void renderGameDraw();
+    void renderGameEnd();
+
     MyLE::ResourceManager m_ResourceManager;
     MyLE::SpriteBatch m_SpriteBatch;
 
     //Timers
     void initTimers(int swapInterval);
+    void updateTimers();
     QTimer m_FrameTimer;
     QTimer m_FPSTimer;
     GLfloat m_Time;
@@ -52,17 +62,20 @@ private:
     void initShaders();
     QOpenGLShaderProgram m_Shader;
 
-    QOpenGLTexture * m_TestTexture;
-
-
     //Game objects
-    std::vector<Projectile> m_Projectiles;
+    void initPlayer();
+    Player* m_Player;
+    std::vector<GameObject*> m_Objects;
 
-    //Config
+    //System config
     void initWindow(int width, int height);
     void initCameras();
     QColor m_ClearColor;
 
+    //Levels
+    void readLevels();
+    std::vector<Level*> m_Levels;
+    int m_CurrentLevel;
 
 private slots:
     void printFPS();

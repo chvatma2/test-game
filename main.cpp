@@ -4,11 +4,10 @@
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName("MyLE");
+    app.setApplicationName("Test Game");
 
     MainGame game;
     game.init();
-    qDebug() << "Initialised";
     game.show();
 
     return app.exec();

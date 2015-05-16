@@ -5,7 +5,7 @@ const float SCALE_SPEED = 0.1f;
 const float CAMERA_SPEED = 2.0f;
 
 MainGame::MainGame(QWidget *parent)
-    : QOpenGLWidget(parent), m_ClearColor(Qt::black)
+    : QOpenGLWidget(parent), m_FrameCounter(0), m_Player(nullptr), m_ClearColor(Qt::darkGray), m_CurrentLevel(0)
 {
 
 }
@@ -13,6 +13,10 @@ MainGame::MainGame(QWidget *parent)
 MainGame::~MainGame()
 {
     delete m_MainCamera;
+    for(unsigned int i = 0; i < m_Levels.size(); i++)
+        delete m_Levels[i];
+    for(unsigned int i = 0; i< m_Objects.size(); i++)
+        delete m_Objects[i];
 }
 
 void MainGame::connectSlots()
@@ -40,8 +44,7 @@ void MainGame::paintGL()
 
     renderGame();
 
-    m_FrameCounter++;
-    m_Time += 0.01f;
+    updateTimers();
 }
 
 void MainGame::initializeGL()
@@ -67,18 +70,15 @@ void MainGame::initializeGL()
 
     m_FrameTimer.start();
     m_FPSTimer.start();
+
+
+    //Read game data
+    readLevels();
+    initPlayer();
 }
 
 void MainGame::processInput()
 {
-    if(m_InputManager.isKeyPressed(Qt::Key_W))
-        m_MainCamera->setPosition(m_MainCamera->getPosition() + QVector2D(0, -CAMERA_SPEED));
-    if(m_InputManager.isKeyPressed(Qt::Key_S))
-        m_MainCamera->setPosition(m_MainCamera->getPosition() + QVector2D(0, CAMERA_SPEED));
-    if(m_InputManager.isKeyPressed(Qt::Key_A))
-        m_MainCamera->setPosition(m_MainCamera->getPosition() + QVector2D(CAMERA_SPEED, 0.0f));
-    if(m_InputManager.isKeyPressed(Qt::Key_D))
-        m_MainCamera->setPosition(m_MainCamera->getPosition() + QVector2D(-CAMERA_SPEED, 0.0f));
     if(m_InputManager.isKeyPressed(Qt::Key_Q))
         m_MainCamera->changeScaleBy(SCALE_SPEED);
     if(m_InputManager.isKeyPressed(Qt::Key_E))
@@ -91,27 +91,29 @@ void MainGame::processInput()
         QVector2D direction(clickPosition - playerPosition);
         QVector2D size(10.0f, 10.0f);
         direction.normalize();
-        m_Projectiles.emplace_back(playerPosition, direction, size, 10.0f, 10000 );
     }
 }
 
 void MainGame::gameLogic()
 {
-    for(unsigned int i = 0; i < m_Projectiles.size();)
-    {
-        m_Projectiles[i].update();
-        if(m_Projectiles[i].isToBeDestroyed())
-        {
-            m_Projectiles[i] = m_Projectiles.back();
-            m_Projectiles.pop_back();
-        }
-        else
-            i++;
-    }
+    for(unsigned int i = 0; i < m_Objects.size(); i++)
+        m_Objects[i]->update();
 }
 
 void MainGame::renderGame()
 {
+    renderGameBegin();
+
+    renderGameDraw();
+
+    renderGameEnd();
+}
+
+void MainGame::renderGameBegin()
+{
+    m_MainCamera->setPosition(m_Player->getPosition());
+    m_MainCamera->update();
+
     glClearColor(m_ClearColor.redF(), m_ClearColor.greenF(), m_ClearColor.blueF(), m_ClearColor.alphaF());
     glClearDepth(1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -125,16 +127,18 @@ void MainGame::renderGame()
     glActiveTexture(GL_TEXTURE0);
 
     m_SpriteBatch.begin();
+}
 
-    m_SpriteBatch.draw(QVector4D(0.0f, 0.0f , 50.0f, 50.0f),
-                       QVector4D(0.0f, 0.0f, 1.0f, 1.0f),
-                       "resources/textures/starwars/xwing.png",
-                       0.0f,
-                       QColor(255, 255, 0));
+void MainGame::renderGameDraw()
+{
+    m_Levels[m_CurrentLevel]->draw();
 
-    for(unsigned int i = 0; i < m_Projectiles.size(); i++)
-        m_Projectiles[i].draw(m_SpriteBatch);
+    for(unsigned int i = 0; i < m_Objects.size(); i++)
+        m_Objects[i]->draw(m_SpriteBatch);
+}
 
+void MainGame::renderGameEnd()
+{
     m_SpriteBatch.end();
     m_SpriteBatch.renderBatch();
 }
@@ -142,6 +146,7 @@ void MainGame::renderGame()
 
 void MainGame::init()
 {
+    //System config
     QSurfaceFormat format;
     format.setSwapInterval(1);
     format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
@@ -172,6 +177,12 @@ void MainGame::initTimers(int swapInterval)
     m_FPSTimer.setInterval(5000);
 }
 
+void MainGame::updateTimers()
+{
+    m_FrameCounter++;
+    m_Time += 0.01f;
+}
+
 void MainGame::initShaders()
 {
     if( m_Shader.addShaderFromSourceFile(QOpenGLShader::Vertex, "resources/shaders/vertshader.vert"))
@@ -186,6 +197,15 @@ void MainGame::initShaders()
     m_Shader.setUniformValue("testTexture", 0);
 }
 
+void MainGame::initPlayer()
+{
+    m_Player = new Player(m_Levels[m_CurrentLevel]->getPlayerPosition(),
+                          m_ResourceManager.loadTexture("resources/textures/starwars/xwing.png"),
+                          10.0f,
+                          &m_InputManager);
+    m_Objects.push_back(m_Player);
+}
+
 void MainGame::initWindow(int width, int height)
 {
     setFixedSize(width, height);
@@ -198,6 +218,11 @@ void MainGame::initCameras()
     m_MainCamera = new MyLE::Camera2D(width(), height());
 }
 
+void MainGame::readLevels()
+{
+    m_Levels.push_back(new Level("resources/levels/level1", &m_ResourceManager, &m_Shader));
+}
+
 void MainGame::printFPS()
 {
     qDebug() << "FPS: " << m_FrameCounter/5;
@@ -206,6 +231,5 @@ void MainGame::printFPS()
 
 void MainGame::update()
 {
-    m_MainCamera->update();
     repaint();
 }

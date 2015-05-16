@@ -1,7 +1,7 @@
 #include "projectile.h"
 
-Projectile::Projectile(QVector2D &position, QVector2D &direction, QVector2D &size, float speed, int lifeTime)
-    : m_Speed(speed), m_LifeTime(lifeTime), m_IsToBeDestroyed(false), m_Position(position), m_Direction(direction), m_Size(size)
+Projectile::Projectile(QVector2D &position, QVector2D &direction, QVector2D &size, float speed, int lifeTime, GLuint texture)
+    : MovingObject(position, texture, speed), m_LifeTime(lifeTime), m_IsToBeDestroyed(false), m_Direction(direction), m_Size(size)
 {
 
 }
@@ -10,7 +10,7 @@ void Projectile::draw(MyLE::SpriteBatch &spriteBatch)
 {
     spriteBatch.draw(QVector4D(m_Position, m_Size.x(), m_Size.y()),
                      QVector4D(0.0f, 0.0f, 1.0f, 1.0f),
-                     "resources/textures/JimmyJump/Bullet.png",
+                     m_Texture,
                      0.0f,
                      QColor(255, 0, 0));
 }

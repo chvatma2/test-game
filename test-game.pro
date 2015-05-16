@@ -9,11 +9,23 @@ QT += core gui opengl
 SOURCES += \
     main.cpp \
     maingame.cpp \
-    projectile.cpp
+    projectile.cpp \
+    gameobject.cpp \
+    level.cpp \
+    ship.cpp \
+    player.cpp \
+    enemy.cpp \
+    movingobject.cpp
 
 HEADERS += \
     maingame.h \
-    projectile.h
+    projectile.h \
+    gameobject.h \
+    level.h \
+    ship.h \
+    player.h \
+    enemy.h \
+    movingobject.h
 
 CONFIG += c++11
 
